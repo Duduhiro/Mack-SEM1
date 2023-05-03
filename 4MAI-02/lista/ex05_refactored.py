@@ -55,7 +55,8 @@ def imprime_boletin (lista) :
             else :
                 print(f'{lista[i][j]:3.2f}|', end='')
         print(f' {lista[i]["grad"]}') # Printa se o aluno foi aprovado ou reprovado
-
+    print()
+    
 def search_student (lista, nome) :
     # Procura um aluno em específico na lista de alunos
     for i in range (len(lista)) :
