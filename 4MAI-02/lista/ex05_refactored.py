@@ -43,7 +43,7 @@ def registra_aluno () :
     return lista_alunos
 
 def imprime_boletin (lista) :
-    print('Name      | N1 | N2 | N3 | N4 | AVG| Pass/Fail') # Printa o header da tabela
+    print('Name      | G1 | G2 | G3 | G4 | AVG| Pass/Fail') # Printa o header da tabela
     for i in range (len(lista)) :
         spaces = 10 - len(lista[i]['name']) # Calcula quantos espaços são necessários de identação na área do nome
         print(f"{lista[i]['name']}", end="") 
@@ -61,7 +61,7 @@ def search_student (lista, nome) :
     # Procura um aluno em específico na lista de alunos
     for i in range (len(lista)) :
         if lista[i]['name'] == nome :
-            print('Name      | N1 | N2 | N3 | N4 | AVG| Pass/Fail')
+            print('Name      | G1 | G2 | G3 | G4 | AVG| Pass/Fail')
             spaces = 10 - len(lista[i]['name'])
             print(f"{lista[i]['name']}", end="")
             print(f" " * spaces, end="|")
