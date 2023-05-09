@@ -4,6 +4,7 @@ elemento e imprimir. """
 import random
 
 def find_max_min (lista) :
+    # Define função de achar o max e min de uma lista ao ordena-la e depois pegar o primeiro e o ultimo elemento
     lista.sort()
     return lista[0], lista[len(lista) - 1]
 

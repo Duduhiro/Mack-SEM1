@@ -16,7 +16,7 @@ for i in range (10) :
         else :
             print("Invalid Command!")
 alunos = []
-for i in range (3) :
+for i in range (5) :
     aluno = {
         'aprovado': 'REPROVADO',
         'final': 0,

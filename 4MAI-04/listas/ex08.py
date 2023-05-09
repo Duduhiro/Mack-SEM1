@@ -3,9 +3,9 @@ imprima cada um dos seus dígitos por extenso.
 Exemplo: Entre com um número: 4571
 Resultado: quatro, cinco, sete, um. """
 
-n = int(input("N: "))
-n = str(n)
-for i in n : 
+n = int(input("N: ")) # Recebe um número inteiro
+n = str(n) # Transforma o número em uma String
+for i in n : # Itera entre os elementos da string e printa o número por extenso
     if i == '0' :
         print('Zero ', end='')
     elif i == '1' :

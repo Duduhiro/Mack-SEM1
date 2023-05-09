@@ -43,7 +43,7 @@ def registra_aluno () :
     return lista_alunos
 
 def imprime_boletin (lista) :
-    print('Name      | G1 | G2 | G3 | G4 | AVG| Pass/Fail') # Printa o header da tabela
+    print('Name      |  G1  |  G2  |  G3  |  G4  |  AVG | Pass/Fail') # Printa o header da tabela
     for i in range (len(lista)) :
         spaces = 10 - len(lista[i]['name']) # Calcula quantos espaços são necessários de identação na área do nome
         print(f"{lista[i]['name']}", end="") 
@@ -51,9 +51,9 @@ def imprime_boletin (lista) :
         for j in range (1, 6) :
             #Printa as notas e média
             if lista[i][j] == 10 :
-                print(f'{lista[i][j]:3.1f}|', end='')
+                print(f' {lista[i][j]:3.1f} |', end='')
             else :
-                print(f'{lista[i][j]:3.2f}|', end='')
+                print(f' {lista[i][j]:3.2f} |', end='')
         print(f' {lista[i]["grad"]}') # Printa se o aluno foi aprovado ou reprovado
     print()
     
@@ -61,19 +61,49 @@ def search_student (lista, nome) :
     # Procura um aluno em específico na lista de alunos
     for i in range (len(lista)) :
         if lista[i]['name'] == nome :
-            print('Name      | G1 | G2 | G3 | G4 | AVG| Pass/Fail')
+            print('Name      |  G1  |  G2  |  G3  |  G4  |  AVG | Pass/Fail')
             spaces = 10 - len(lista[i]['name'])
             print(f"{lista[i]['name']}", end="")
             print(f" " * spaces, end="|")
             for j in range (1, 6) :
                 if lista[i][j] == 10 :
-                    print(f'{lista[i][j]:3.1f}|', end='')
+                    print(f' {lista[i][j]:3.1f} |', end='')
                 else :
-                    print(f'{lista[i][j]:3.2f}|', end='')
+                    print(f' {lista[i][j]:3.2f} |', end='')
             print(f' {lista[i]["grad"]}')
+            while True :
+                edit = input("Edit this student grade (y/n): ")
+                if edit.lower() == 'n' :
+                    break
+                elif edit.lower() == 'y' :
+                    while True :
+                        grade = int(input("Grade 1 | 2 | 3 | 4 : "))
+                        if grade >= 1 and grade <= 4 :
+                            break
+                    while True :
+                        grade_value = float(input("Grade: "))
+                        if grade_value >= 0 and grade_value <= 10 :
+                            break
+                    edita_aluno(lista, i, grade, grade_value)
+                    print('Grade Updated Sucessfully\n')
+                    search_student(lista, nome)
+                    break
+                else :
+                    print("Error! Wrong command\n")
             break
     else :
         print('Wrong Name')
+
+def edita_aluno (lista, student_number, grade, grade_value) :
+    lista[student_number][grade] = grade_value
+    grade_sum = 0
+    for i in range (1, 5) :
+        grade_sum += lista[student_number][i]
+    lista[student_number][5] = grade_sum / 4
+    if (grade_sum / 4) >= 7 :
+        lista[student_number]['grad'] = 'Pass'
+    else :
+        lista[student_number]['grad'] = 'Failed'
 
 lista_alunos = registra_aluno()
 print()
@@ -84,8 +114,10 @@ while True :
     if search.lower() == 'y' :
         # Pesquisa os dados do aluno a partir de seu nome
         student_name = input("Student Name: ")
+        print()
         search_student(lista_alunos, student_name)
         print()
+        imprime_boletin(lista_alunos)
     elif search.lower() == 'n' :
         break
     else :

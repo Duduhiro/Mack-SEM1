@@ -3,6 +3,6 @@ imprime uma lista com os caracteres que formam a palavra. Exemplo:
 Entrada = "Algoritmos"
 Saída: ['A', 'l', 'g', 'o', 'r', 'i', 't', 'm', 'o', 's'] """
 
-palavra = input("Palavra: ")
-lista = [x for x in palavra]
+palavra = input("Palavra: ") # Recebe uma palavra
+lista = [x for x in palavra] # Cria uma lista com cada caracter da palavra sendo um elemento da lista
 print(lista)
