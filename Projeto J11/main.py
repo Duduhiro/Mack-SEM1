@@ -46,6 +46,7 @@ def votar (eleitor, candidatos, cargo) :
             print("Erro! Candidato não encontrado\n")
         
 def apurar_resultados (presidentes, governadores, prefeitos, votos_especiais, partidos) :
+    texto = []
     total_votos = 0
     presidentes = sorted(presidentes, key=lambda d: d['votos'], reverse=True)
     for i in range(len(partidos)) :
@@ -68,17 +69,27 @@ def apurar_resultados (presidentes, governadores, prefeitos, votos_especiais, pa
     print('Nome', end='')
     print(' ' * (espacamento_nome - 4), end='|')
     print('Partido|Votos')
+    texto.append("RANKING DO RESULTADO PARA PRESIDENTE")
+    texto.append('------------===------------')
+    texto.append('Nome' + ' ' * (espacamento_nome - 4) + "|"+ 'Partido|Votos')
+
     for i in range (len(presidentes)) :
         print(f'{presidentes[i]["nome"]}', end='')
         print(' ' * (espacamento_nome - len(presidentes[i]['nome'])), end='|')
         print(f'{presidentes[i]["partido"]}', end='')
         print(' ' * (espacamento_partido - len(presidentes[i]['partido'])), end='|')
         print(f'{presidentes[i]["votos"]}')
+        texto.append(f'{presidentes[i]["nome"]}' + ' ' * (espacamento_nome - len(presidentes[i]['nome'])) + f'|{presidentes[i]["partido"]}' + ' ' * (espacamento_partido - len(presidentes[i]['partido'])) + f'|{presidentes[i]["votos"]}')
         total_votos += presidentes[i]['votos']
     print('------------===------------')
     print(f'Total de votos: {total_votos}')
     print(f'Total de votos brancos: {votos_especiais["branco_presidente"]}')
     print(f'Total de votos nulos: {votos_especiais["nulo_presidente"]}\n')
+    texto.append('------------===------------')
+    texto.append(f'Total de votos: {total_votos}')
+    texto.append(f'Total de votos brancos: {votos_especiais["branco_presidente"]}')
+    texto.append(f'Total de votos nulos: {votos_especiais["nulo_presidente"]}\n')
+    texto.append('')
 
     total_votos = 0
     governadores = sorted(governadores, key=lambda d: d['votos'], reverse=True)
@@ -102,17 +113,26 @@ def apurar_resultados (presidentes, governadores, prefeitos, votos_especiais, pa
     print('Nome', end='')
     print(' ' * (espacamento_nome - 4), end='|')
     print('Partido|Votos')
+    texto.append("RANKING DO RESULTADO PARA GOVERNADOR")
+    texto.append('------------===------------')
+    texto.append('Nome' + ' ' * (espacamento_nome - 4) + "|"+ 'Partido|Votos')
     for i in range (len(governadores)) :
         print(f'{governadores[i]["nome"]}', end='')
         print(' ' * (espacamento_nome - len(governadores[i]['nome'])), end='|')
         print(f'{governadores[i]["partido"]}', end='')
         print(' ' * (espacamento_partido - len(governadores[i]['partido'])), end='|')
         print(f'{governadores[i]["votos"]}')
+        texto.append(f'{governadores[i]["nome"]}' + ' ' * (espacamento_nome - len(governadores[i]['nome'])) + f'|{governadores[i]["partido"]}' + ' ' * (espacamento_partido - len(governadores[i]['partido'])) + f'|{governadores[i]["votos"]}')
         total_votos += governadores[i]['votos']
     print('------------===------------')
     print(f'Total de votos: {total_votos}')
     print(f'Total de votos brancos: {votos_especiais["branco_governador"]}')
     print(f'Total de votos nulos: {votos_especiais["nulo_governador"]}\n')
+    texto.append('------------===------------')
+    texto.append(f'Total de votos: {total_votos}')
+    texto.append(f'Total de votos brancos: {votos_especiais["branco_governador"]}')
+    texto.append(f'Total de votos nulos: {votos_especiais["nulo_governador"]}\n')
+    texto.append('')
 
     total_votos = 0
     prefeitos = sorted(prefeitos, key=lambda d: d['votos'], reverse=True)
@@ -136,17 +156,27 @@ def apurar_resultados (presidentes, governadores, prefeitos, votos_especiais, pa
     print('Nome', end='')
     print(' ' * (espacamento_nome - 4), end='|')
     print('Partido|Votos')
+    texto.append("RANKING DO RESULTADO PARA PREFEITO")
+    texto.append('------------===------------')
+    texto.append('Nome' + ' ' * (espacamento_nome - 4) + "|"+ 'Partido|Votos')
     for i in range (len(prefeitos)) :
         print(f'{prefeitos[i]["nome"]}', end='')
         print(' ' * (espacamento_nome - len(prefeitos[i]['nome'])), end='|')
         print(f'{prefeitos[i]["partido"]}', end='')
         print(' ' * (espacamento_partido - len(prefeitos[i]['partido'])), end='|')
         print(f'{prefeitos[i]["votos"]}')
+        texto.append(f'{prefeitos[i]["nome"]}' + ' ' * (espacamento_nome - len(prefeitos[i]['nome'])) + f'|{prefeitos[i]["partido"]}' + ' ' * (espacamento_partido - len(prefeitos[i]['partido'])) + f'|{prefeitos[i]["votos"]}')
         total_votos += prefeitos[i]['votos']
     print('------------===------------')
     print(f'Total de votos: {total_votos}')
     print(f'Total de votos brancos: {votos_especiais["branco_prefeito"]}')
     print(f'Total de votos nulos: {votos_especiais["nulo_prefeito"]}\n')
+    texto.append('------------===------------')
+    texto.append(f'Total de votos: {total_votos}')
+    texto.append(f'Total de votos brancos: {votos_especiais["branco_prefeito"]}')
+    texto.append(f'Total de votos nulos: {votos_especiais["nulo_prefeito"]}\n')
+    texto.append('')
+    return texto
 
 def relatorio (eleitores, partidos) :
     eleitores = sorted(eleitores, key=lambda d: d['nome'])
@@ -156,8 +186,14 @@ def relatorio (eleitores, partidos) :
     print()
     partidos = sorted(partidos, key=lambda d: d['eleitos'], reverse=True)
     print(f"PARTIDOS COM MAIS ELEITOS: {partidos[0]['nome']} {partidos[0]['eleitos']} eleitos")
-    print(f"PARTIDOS COM MENOS ELEITOS: {partidos[0]['nome']} {partidos[len(partidos) - 1]['eleitos']} eleitos\n")
-    
+    print(f"PARTIDOS COM MENOS ELEITOS: {partidos[len(partidos) - 1]['nome']} {partidos[len(partidos) - 1]['eleitos']} eleitos\n")
+
+def gravar_apuracao (texto) :
+    file = open('apuracao.txt', 'w')
+    for i in range (len(texto)) :
+        file.write(texto[i] + "\n")
+    file.close()
+
 def main () :
     print('+++++++ MENU - SIMULADOR DO SISTEMA DE VOTAÇÃO +++++++')
     presidentes = []
@@ -213,7 +249,6 @@ def main () :
                         break
                     else : 
                         print('Erro! Comando inválido\n')
-            print(partidos)
         elif selecao == 2 :
             while True :
                 eleitores.append(cadastrar_eleitor())
@@ -242,8 +277,10 @@ def main () :
                 elif votacao == -2 :
                     votos_especiais['nulo_presidente'] += 1
         elif selecao == 4 :
-            apurar_resultados(presidentes, governadores, prefeitos, votos_especiais, partidos)
+            texto = apurar_resultados(presidentes, governadores, prefeitos, votos_especiais, partidos)
         elif selecao == 5 :
             relatorio(eleitores, partidos)
+        elif selecao == 6 :
+            gravar_apuracao(texto)
 
 main()
