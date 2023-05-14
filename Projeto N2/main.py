@@ -4,7 +4,9 @@ e exclusão de produtos, além de exibir um relatório com a lista de produtos c
 Projeto N2
 
 01J12 - BSI
-Eduardo Hiroyuki Tamaributi - 32331762"""
+Eduardo Hiroyuki Tamaributi - 32331762
+Julia Kovacs Takamura - 
+"""
 
 def insira_codigo () :
     # Função para o usuário inserir o código do produto | Como o código foi utilizado diversas vezes, ele foi transformado em uma função
