@@ -1,9 +1,5 @@
 """
-Projeto N2
-
-01J12 - BSI
-Eduardo Hiroyuki Tamaributi - 32331762
-Julia Kovacs Takamura - 
+Testes
 """
 
 def insira_codigo () :
@@ -27,7 +23,6 @@ def cadastra_produto () :
             break
         else :
             print("Erro! Quant deve ser maior que 0\n")
-    print(f'{produto["nome"]} cadastrado com sucesso\n')
     return produto
 
 def consulta_produto (lista, codigo) :
@@ -102,6 +97,7 @@ def excluir_produto (lista, codigo) :
 def exibe_relatorio (lista) :
     # Exibe um relatório do estoque apresentando o nome, código e quantidade de cada item
     if len(lista) > 0 :
+        texto = []
         # Faz o cabeçalho do relatório
         lista = sorted(lista, key=lambda d: d['nome'])
         espacamento = len(lista[0]['nome'])
@@ -114,35 +110,66 @@ def exibe_relatorio (lista) :
         print('Produto', end='')
         print(' ' * espacamento, end='|')
         print(' Codigo | Quant')
+        texto.append('Produto' + ' ' * espacamento + '| Codigo | Quant')
         espacamento += 7
         for i in range (len(lista)) :
             # Printa os itens
             print(lista[i]['nome'], end='')
             print(' ' * (espacamento - len(lista[i]['nome'])), end='|')
             print(f'  {lista[i]["code"]}  |  {lista[i]["quant"]}')
+            texto.append(lista[i]['nome'] + ' ' * (espacamento - len(lista[i]['nome'])) + f'|  {lista[i]["code"]}  |  {lista[i]["quant"]}')
         print()
     else :
         # Caso a lista [estoque] esteja vazia, retorna uma mensagem de erro
         print("Erro! Armazém vazio\n")
+    return texto
 
-print('+++++++ MENU – CONTROLE DE ESTOQUE +++++++')
-estoque = []
-while True :
-    # Printa as opções que o usuário possui
-    print('1. Cadastrar Produto\n2. Consultar Produto\n3. Atualizar Produto\n4. Excluir Produto\n5. Relatório de Produtos\n6. Encerrar')
-    escolha = int(input("Opção escolhida: "))
-    print()
-    if escolha == 6 : 
-        break
-    elif escolha == 1 :
-        estoque.append(cadastra_produto())
-    elif escolha == 2 :
-        consulta_produto(estoque, insira_codigo())
-    elif escolha == 3 :
-        atualiza_produto(estoque, insira_codigo())
-    elif escolha == 4 :
-        excluir_produto(estoque, insira_codigo())
-    elif escolha == 5 :
-        exibe_relatorio(estoque)
-    else :
-        print("Erro! Comando inválido\n") 
+def grava_estoque (texto) :
+    f = open('gravação_estoque.txt', 'w')
+    for i in range (len(texto)) :
+        f.write(texto[i] + '\n') 
+    f.close()
+    print("Estoque gravado com sucesso\n")
+
+def menu () :
+    print('+++++++ MENU – CONTROLE DE ESTOQUE +++++++')
+    estoque = []
+    while True :
+        # Printa as opções que o usuário possui
+        print('1. Cadastrar Produto\n2. Consultar Produto\n3. Atualizar Produto\n4. Excluir Produto\n5. Relatório de Produtos\n6. Gravar estoque\n7. Encerrar')
+        escolha = int(input("Opção escolhida: "))
+        print()
+        if escolha == 7 : 
+            break
+        elif escolha == 1 :
+            produto = cadastra_produto()
+            # Verifica se o código que está sendo cadastrado já existe
+            if len(estoque) > 0 :
+                # Caso o estoque já possua produtos, itera sobre a lista procurando um código igual ao sendo cadastrado
+                for i in range (len(estoque)) :
+                    # Se o código sendo cadastrado for encontrado, lança uma mensagem de erro e não cadastra o item
+                    if estoque[i]['code'] == produto['code'] :
+                        print("Erro! Código já cadastrado\n")
+                        break
+                else :
+                    # Se o código cadastrado não for encontrado, adiciona a lista estoque
+                    estoque.append(produto)
+                    print(f'{produto["nome"]} cadastrado com sucesso\n')
+            else :
+                # Caso o estoque esteja vazio, popula a lista estoque
+                estoque.append(produto)
+                print(f'{produto["nome"]} cadastrado com sucesso\n')
+        elif escolha == 2 :
+            consulta_produto(estoque, insira_codigo())
+        elif escolha == 3 :
+            atualiza_produto(estoque, insira_codigo())
+        elif escolha == 4 :
+            excluir_produto(estoque, insira_codigo())
+        elif escolha == 5 :
+            texto = exibe_relatorio(estoque)
+        elif escolha == 6 :
+            grava_estoque(texto)
+        else :
+            print("Erro! Comando inválido\n") 
+
+menu()
