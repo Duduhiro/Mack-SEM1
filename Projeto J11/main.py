@@ -33,9 +33,23 @@ def votar (eleitor, candidatos, cargo) :
         voto = int(input(f"Voto para {cargo}: "))
         # Caso o voto for -1 ou -2, retorna esse valor e encerra a votação para esse eleitor
         if voto == -1 :
-            return -1
+            while True :
+                confirmar_voto = input("Deseja votar em branco (s/n): ")
+                if confirmar_voto.lower() == 's' :
+                    return -1
+                elif confirmar_voto.lower() == 'n' :
+                    break
+                else :
+                    print('Erro! Comando inválido\n')
         elif voto == -2 :
-            return -2
+            while True :
+                confirmar_voto = input("Deseja votar nulo (s/n): ")
+                if confirmar_voto.lower() == 's' :
+                    return -2
+                elif confirmar_voto.lower() == 'n' :
+                    break
+                else :
+                    print('Erro! Comando inválido\n')
         for j in range (len(candidatos)) :
             # Itera sobre a lista candidatos
             if candidatos[j]['numero'] == voto :
@@ -53,7 +67,7 @@ def votar (eleitor, candidatos, cargo) :
             # Caso depois da iteração, não seja encontrado nenhum candidato com o número do voto fornecido, exibe um erro
             print("Erro! Candidato não encontrado\n")
         
-def apurar_resultados (presidentes, governadores, prefeitos, votos_especiais, partidos) :
+def apurar_resultados (presidentes, governadores, prefeitos, votos_especiais, partidos) :   
     texto = [] # Inicializa uma lista que será usada para a gravação da apuração
     total_votos = 0
     presidentes = sorted(presidentes, key=lambda d: d['votos'], reverse=True) # Ordena a lista presidentes por ordem de voto
@@ -246,6 +260,7 @@ def main () :
     prefeitos = []
     eleitores = []
     partidos = []
+    apurado = False
     votos_especiais = {
         'nulo_presidente': 0,
         'branco_presidente':0,
@@ -316,33 +331,45 @@ def main () :
                     print('Erro! Comando inválido\n')
         elif selecao == 3 :
             # Caso for selecionado 3, começa o processo de votação
-            for i in range (len(eleitores)) :
-                # Para cada eleitor, serão feitos 3 votos, prefeito, governador e presidente
-                # Caso o processo de votação retornar -1, aumenta os votos em branco daquela respectiva categoria de votação
-                # Caso o processo de votação retornar -2, aumenta os votos nulo daquela respectiva categoria de votação
-                votacao = votar(eleitores[i]['nome'], prefeitos, "prefeito")
-                if votacao == -1 :
-                    votos_especiais['branco_prefeito'] += 1
-                elif votacao == -2 :
-                    votos_especiais['nulo_prefeito'] += 1
-                votacao = votar(eleitores[i]['nome'], governadores, "governador")
-                if votacao == -1 :
-                    votos_especiais['branco_governador'] += 1
-                elif votacao == -2 :
-                    votos_especiais['nulo_governador'] += 1
-                votacao = votar(eleitores[i]['nome'], presidentes, "presidente")
-                if votacao == -1 :
-                    votos_especiais['branco_presidente'] += 1
-                elif votacao == -2 :
-                    votos_especiais['nulo_presidente'] += 1
+            if len(presidentes) == 0 or len(governadores) == 0 or len(prefeitos) == 0 :
+                print('Erro! 1 candidato para cada cargo é necessário\n')
+            else :
+                for i in range (len(eleitores)) :
+                    # Para cada eleitor, serão feitos 3 votos, prefeito, governador e presidente
+                    # Caso o processo de votação retornar -1, aumenta os votos em branco daquela respectiva categoria de votação
+                    # Caso o processo de votação retornar -2, aumenta os votos nulo daquela respectiva categoria de votação
+                    votacao = votar(eleitores[i]['nome'], prefeitos, "prefeito")
+                    if votacao == -1 :
+                        votos_especiais['branco_prefeito'] += 1
+                    elif votacao == -2 :
+                        votos_especiais['nulo_prefeito'] += 1
+                    votacao = votar(eleitores[i]['nome'], governadores, "governador")
+                    if votacao == -1 :
+                        votos_especiais['branco_governador'] += 1
+                    elif votacao == -2 :
+                        votos_especiais['nulo_governador'] += 1
+                    votacao = votar(eleitores[i]['nome'], presidentes, "presidente")
+                    if votacao == -1 :
+                        votos_especiais['branco_presidente'] += 1
+                    elif votacao == -2 :
+                        votos_especiais['nulo_presidente'] += 1
         elif selecao == 4 :
             # Caso for selecionado 4, começa o processo de apuração eleitoral
-            texto = apurar_resultados(presidentes, governadores, prefeitos, votos_especiais, partidos)
+            if len(presidentes) == 0 or len(governadores) == 0 or len(prefeitos) == 0 :
+                print('Erro! 1 candidato para cada cargo é necessário\n')
+            else :
+                texto = apurar_resultados(presidentes, governadores, prefeitos, votos_especiais, partidos)
+                apurado = True
         elif selecao == 5 :
             # Caso for selecionado 5, exibe um relatório da eleição
-            relatorio(eleitores, partidos)
+            if len(eleitores) == 0 or len(partidos) == 0 :
+                print("Erro! Partido ou eleitores sem conteúdo")
+            else :
+                relatorio(eleitores, partidos)
         elif selecao == 6 :
-            # Caso for selecionado 6, grava a apuração em um arquivo .txt
-            gravar_apuracao(texto)
-
+            # Caso for selecionado 6, grava a apuração em um arquivo .txt            
+            if apurado == True :
+                gravar_apuracao(texto)
+            else :
+                print('Erro! Apuração não foi feita\n')
 main()

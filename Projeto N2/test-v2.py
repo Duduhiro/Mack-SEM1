@@ -5,6 +5,11 @@ Projeto N2
 Eduardo Hiroyuki Tamaributi - 32331762
 Julia Kovacs Takamura - 32371489
 """
+import tabulate
+import sqlite3
+
+conn = sqlite3.connect('p2.db')
+cursor = conn.cursor()
 
 def int_input (msg) :
     while True :
@@ -36,23 +41,17 @@ def cadastra_produto () :
             break
         else :
             print("Erro! Quant deve ser maior que 0\n")
+    cursor.execute("INSERT INTO storage (product, code, quant) VALUES (?, ?, ?)", produto['nome'], produto['code'], produto['quant'])
     print(f'{produto["nome"]} cadastrado com sucesso\n')
-    return produto
-
-def consulta_produto (lista, codigo) :
-    # Faz a consulta de um produto específico cadastrado
-    for i in range (len(lista)) : # Itera entre os elementos da lista [estoque]
-        if lista[i]['code'] == codigo : 
-            # Caso o código do elemento for o mesmo que o parâmetro da função, printa esse elemento
-            espacamento = len(lista[i]['nome'])
-            if espacamento < 7 :
-                espacamento = 7
-            print(f'Produto' + ' ' * (espacamento - 7) + '| Código | Quant')
-            print(f'{lista[i]["nome"]}' + ' ' * (espacamento - len(lista[i]['nome'])) + f'|  {lista[i]["code"]:4.0f}  | {lista[i]["quant"]}\n')
-            break
+    
+def consulta_produto (codigo) :
+    cursor.execute("SELECT product, code, quant FROM storage WHERE code = ?", (codigo,))
+    product = cursor.fetchall()
+    if product != None :
+        headers = [description[0] for description in cursor.description]
+        print(tabulate(product, headers=headers, tablefmt="simple_grid"))
     else :
-        # Caso não haja correspondência para o código inserido como parâmetro, devolve uma mensagem de erro
-        print("Erro! Produto não encontrado\n") 
+        print("Product Not Found!")
 
 def atualiza_produto (lista, codigo) :
     # Atualiza o nome e quantidade de um produto da lista [estoque]
@@ -143,7 +142,7 @@ while True :
     elif escolha == 1 :
         estoque.append(cadastra_produto())
     elif escolha == 2 :
-        consulta_produto(estoque, insira_codigo())
+        consulta_produto(insira_codigo())
     elif escolha == 3 :
         atualiza_produto(estoque, insira_codigo())
     elif escolha == 4 :

@@ -1,28 +1,30 @@
 RANKING DO RESULTADO PARA PRESIDENTE
 ------------===------------
-Nome|Partido|Votos
-Bia |PT     |1
-Ana |PSOL   |1
+Nome   |Partido|Votos
+Arnaldo|PSOL   |1
 ------------===------------
-Total de votos: 2
+Total de votos: 1
 Total de votos brancos: 0
-Total de votos nulos: 1
+Total de votos nulos: 0
+
 
 RANKING DO RESULTADO PARA GOVERNADOR
 ------------===------------
 Nome |Partido|Votos
-Carol|PSOL   |3
+Breno|PTB    |1
 ------------===------------
-Total de votos: 3
+Total de votos: 1
 Total de votos brancos: 0
 Total de votos nulos: 0
 
+
 RANKING DO RESULTADO PARA PREFEITO
 ------------===------------
-Nome |Partido|Votos
-David|PSOL   |3
+Nome    |Partido|Votos
+Chandler|prefeito|1
 ------------===------------
-Total de votos: 3
+Total de votos: 1
 Total de votos brancos: 0
 Total de votos nulos: 0
+
 

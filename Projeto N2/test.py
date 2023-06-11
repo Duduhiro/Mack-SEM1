@@ -11,7 +11,7 @@ def insira_codigo () :
             return codigo
         else :
             print('Erro! Código deve conter 4 dígitos\n')
-        
+
 def cadastra_produto () :
     # Cria um dicionário {produto} que possui as categorias: none, código e quantidade
     produto = {}
