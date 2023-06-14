@@ -5,7 +5,7 @@ Projeto N2
 Eduardo Hiroyuki Tamaributi - 32331762
 Julia Kovacs Takamura - 32371489
 """
-import tabulate
+from tabulate import tabulate
 import sqlite3
 
 conn = sqlite3.connect('p2.db')
@@ -25,129 +25,136 @@ def insira_codigo () :
     while True :
         # Recebe um input do código do produto e caso ele possuir 4 dígitos, retorna o valor
         codigo = int_input("Código do produto: ")
-        if codigo > 0 and codigo < 10000 :
+        if codigo >= 0 and codigo < 10000 :
             return codigo
         else :
             print('Erro! Código deve conter no máximo 4 dígitos\n')
         
 def cadastra_produto () :
     # Cria um dicionário {produto} que possui as categorias: none, código e quantidade
+    cursor.execute("SELECT code FROM storage")
+    code_list = cursor.fetchall()
     produto = {}
     produto['nome'] = input("Nome do produto: ")
-    produto['code'] = insira_codigo()
+    while True :    
+        produto['code'] = insira_codigo()
+        for i in code_list :    
+            if produto['code'] in i :
+                print('Error! Code already used\n')
+                break
+        else :
+            break         
     while True :
         produto['quant'] = int_input("Quant: ")
         if produto['quant'] > 0 :
             break
         else :
             print("Erro! Quant deve ser maior que 0\n")
-    cursor.execute("INSERT INTO storage (product, code, quant) VALUES (?, ?, ?)", produto['nome'], produto['code'], produto['quant'])
+    cursor.execute("INSERT INTO storage (product, code, quant) VALUES (?, ?, ?)", (produto['nome'], produto['code'], produto['quant']))
     print(f'{produto["nome"]} cadastrado com sucesso\n')
     
 def consulta_produto (codigo) :
     cursor.execute("SELECT product, code, quant FROM storage WHERE code = ?", (codigo,))
     product = cursor.fetchall()
-    if product != None :
+    if len(product) > 0 :
         headers = [description[0] for description in cursor.description]
         print(tabulate(product, headers=headers, tablefmt="simple_grid"))
     else :
-        print("Product Not Found!")
+        print("Product Not Found!\n")
 
-def atualiza_produto (lista, codigo) :
+def atualiza_produto (codigo) :
     # Atualiza o nome e quantidade de um produto da lista [estoque]
-    for i in range (len(lista)) : # Itera entre os elementos da lista [estoque]
-        if lista[i]['code']== codigo : 
-            # Caso o código do elemento for o mesmo que o parâmetro da função, atualiza o seu nome e/ou quantidade
-            print(f'Produto a ser atualizado: {lista[i]["nome"]}')
-            while True :
-                att_nome = input("Deseja atualizar o nome (s/n): ")
-                if att_nome.lower() == 's' :
-                    lista[i]['nome'] = input("Nome atualizado: ")
-                    break
-                elif att_nome.lower() == 'n' :
-                    break
-                else :
-                    print("Erro! Comando inválido\n")
-            while True :
-                att_quant = input("Deseja atualizar a quant (s/n): ")
-                if att_quant.lower() == 's' :
-                    lista[i]['quant'] = int(input("Quant atualizada: "))
-                    break
-                elif att_quant.lower() == 'n' :
-                    break
-                else :
-                    print("Erro! Comando inválido\n")
-            print(f'{lista[i]["nome"]} atualizado com sucesso\n')
-            consulta_produto(lista, codigo)
-            break
+    cursor.execute("SELECT product, code, quant FROM storage WHERE code = ?", (codigo,))
+    product = cursor.fetchall()
+    if len(product) > 0 :
+        consulta_produto(codigo)
+        while True :
+            update = input("Do you want to update this item's name (y/n): ")
+            if update.lower() == 'y' :
+                name = input("New name: ")
+                cursor.execute("UPDATE storage SET product = ? WHERE code = ?", (name, codigo))
+                break
+            elif update.lower() == 'n' :
+                break
+            else :
+                print('Error! Wrong command\n')
+        while True :
+            update = input("Do you want to update this item's quantity (y/n): ")
+            if update.lower() == 'y' :
+                quant = int_input("New quantity: ")
+                cursor.execute("UPDATE storage SET quant = ? WHERE code = ?", (quant, codigo))
+                break
+            elif update.lower() == 'n' :
+                break
+            else :
+                print('Error! Wrong command\n')
+        print("Product Updated!\n")
     else :
-        # Caso não haja correspondência para o código inserido como parâmetro, devolve uma mensagem de erro
-        print("Erro! Produto não encontrado\n") 
+        print("Product Not Found!\n")
 
-def excluir_produto (lista, codigo) :
+def excluir_produto (codigo) :
     # Exclui um determinado elemento da lista [estoque]
-    for i in range (len(lista)) : # Itera entre os elementos da lista [estoque]
-        if lista[i]['code'] == codigo :
-            # Caso o código do elemento for o mesmo que o parâmetro da função, pergunta se o usuário quer fazer a remoção do item
-            while True :
-                confirmar = input(f"Deseja remover o item {lista[i]['nome']} (s/n): ")
-                if confirmar == 's' :
-                    lista.pop(i)
-                    print("Produto removido com sucesso\n")
-                    break
-                elif confirmar == 'n' :
-                    print("Operação cancelada\n")
-                    break
-                else :
-                    print('Erro! Comando inválido')
-            break
+    cursor.execute("SELECT product, code, quant FROM storage WHERE code = ?", (codigo,))
+    product = cursor.fetchall()
+    if len(product) > 0 : 
+        consulta_produto(codigo)
+        while True :
+            delete = input("Delete this product (y/n): ")
+            if delete.lower() == 'y' :
+                cursor.execute("DELETE FROM storage WHERE code = ?", (codigo,))
+                print('Product Deleted!\n')
+                break
+            elif delete.lower() == 'n' : 
+                print('Aborted!\n')
+                break
+            else :
+                print('Error! Wrong command\n')
     else :
-        print("Erro! Produto não encontrado\n")
+        print("Product Not Found\n")
 
-def exibe_relatorio (lista) :
+def exibe_relatorio (sortby) :
     # Exibe um relatório do estoque apresentando o nome, código e quantidade de cada item
-    if len(lista) > 0 :
-        # Faz o cabeçalho do relatório
-        lista = sorted(lista, key=lambda d: d['nome'])
-        espacamento = len(lista[0]['nome'])
-        for i in range (len(lista)) :
-            if len(lista[i]['nome']) > espacamento :
-                espacamento = len(lista[i]['nome'])
-        espacamento -= 7
-        if espacamento < 0 : 
-            espacamento = 0
-        print('Produto', end='')
-        print(' ' * espacamento, end='|')
-        print(' Codigo | Quant')
-        espacamento += 7
-        for i in range (len(lista)) :
-            # Printa os itens
-            print(lista[i]['nome'], end='')
-            print(' ' * (espacamento - len(lista[i]['nome'])), end='|')
-            print(f'  {lista[i]["code"]:4.0f}  |  {lista[i]["quant"]}')
-        print()
+    if sortby == 1 :
+        sort = "product ASC"
+    elif sortby == 2 :
+        sort = "product DESC"
+    elif sortby == 3:
+        sort = "code ASC"
+    elif sortby == 4 :
+        sort = "code DESC"
+    elif sortby == 5 :
+        sort = "quant ASC"
     else :
-        # Caso a lista [estoque] esteja vazia, retorna uma mensagem de erro
-        print("Erro! Armazém vazio\n")
+        sort = "quant DESC"
+    query = "SELECT product, code, quant FROM storage ORDER BY " + sort
+    cursor.execute(query)
+    product_list = cursor.fetchall()
+    if len(product_list) > 0 :
+        header = [description[0] for description in cursor.description]
+        print(tabulate(product_list, headers=header, tablefmt="simple_grid"))
+    else :
+        print("Empty Storage\n")
 
 print('+++++++ MENU – CONTROLE DE ESTOQUE +++++++')
-estoque = []
 while True :
     # Printa as opções que o usuário possui
     print('1. Cadastrar Produto\n2. Consultar Produto\n3. Atualizar Produto\n4. Excluir Produto\n5. Relatório de Produtos\n6. Encerrar')
     escolha = int_input("Opção escolhida: ")
     print()
     if escolha == 6 : 
+        conn.commit()
+        conn.close()
         break
     elif escolha == 1 :
-        estoque.append(cadastra_produto())
+        cadastra_produto()
     elif escolha == 2 :
         consulta_produto(insira_codigo())
     elif escolha == 3 :
-        atualiza_produto(estoque, insira_codigo())
+        atualiza_produto(insira_codigo())
     elif escolha == 4 :
-        excluir_produto(estoque, insira_codigo())
+        excluir_produto(insira_codigo())
     elif escolha == 5 :
-        exibe_relatorio(estoque)
+        sortby = int_input("Sort by:\n1- Product Name Asc\n2- Product Name Desc\n3- Product Code Asc\n4- Product Code Desc\n5- Product Quant Asc\n6- Product Quant Desc\nOption: ")
+        exibe_relatorio(sortby)
     else :
         print("Erro! Comando inválido\n") 
